@@ -1,11 +1,15 @@
 import mongoose from 'mongoose'
 import app from './app.js'
-import swaggerJsDoc from 'swagger-jsdoc'
-import swaggerUi from 'swagger-ui-express'
 import cors from 'cors'
 import { Router } from 'express'
 import bodyParser from 'body-parser'
 import { Logger } from './util/Logger.js'
+import { EmailsModel } from './models/emails.js'
+import {
+  handleError,
+  createdResponse,
+  recordAlreadyExists,
+} from './util/ApiResponse.js'
 
 mongoose
   .connect(
@@ -24,24 +28,22 @@ mongoose
 app.use(cors())
 app.use(bodyParser.json())
 
-const swaggerOption = {
-  swaggerDefinition: {
-    info: {
-      title: 'TvinUP API ',
-      description: 'TvinUP API Information',
-      version: '1.0.0',
-    },
-    contact: {
-      name: 'Giga Uchaneishvli',
-    },
-    servers: ['http://localhost:3000/'],
-  },
-  apis: ['*.js'],
-}
+app.post('/subscribe', async (req, res) => {
+  try {
+    const email = req.body.email
 
-const swaggerDocs = swaggerJsDoc(swaggerOption)
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs))
+    const emailsExist = await EmailsModel.countDocuments({ email: email })
 
+    if (emailsExist) {
+      return recordAlreadyExists(res)
+    }
+
+    const rec = await new EmailsModel(req.body).save()
+    return createdResponse(rec, res)
+  } catch (err) {
+    return handleError(error, res, 'Error while subscribing website.')
+  }
+})
 const router = Router()
 
 const options = {
