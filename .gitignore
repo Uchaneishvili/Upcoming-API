@@ -1,0 +1,95 @@
+# Ignore temporary files
+*.swp
+*.swo
+*~
+
+# Ignore compiled binaries
+*.o
+*.out
+*.class
+
+# Ignore dependencies
+/node_modules
+/vendor
+/.venv
+/.idea
+
+# Ignore logs and databases
+*.log
+*.sqlite
+*.db
+
+# Ignore environment-specific files
+.env
+.env.local
+.env.*.local
+
+# Ignore OS-generated files
+.DS_Store
+Thumbs.db
+
+# Ignore editor-specific files
+.vscode/
+.idea/
+
+# Ignore configuration files
+*.config
+
+# Ignore backup files
+*.bak
+*.backup
+*.orig
+
+# Ignore generated documentation
+/doc
+/docs
+
+# Ignore npm debug log
+npm-debug.log*
+
+# Ignore Jekyll build directory
+/_site/
+
+# Ignore Eclipse project files
+.classpath
+.project
+.settings/
+
+# Ignore Sublime Text project files
+*.sublime-project
+*.sublime-workspace
+
+# Ignore Visual Studio Code workspace settings
+.vscode/
+
+# Ignore yarn.lock file
+yarn.lock
+
+# Ignore Jupyter Notebooks checkpoints
+.ipynb_checkpoints/
+
+# Ignore coverage directory
+/coverage/
+
+# Ignore pytest cache
+__pycache__/
+*.pyc
+
+# Ignore local .env files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Ignore yarn error log
+yarn-error.log
+
+# Ignore .eslintcache
+.eslintcache
+
+# Ignore Cypress videos, screenshots, and other artifacts
+/cypress/videos/
+/cypress/screenshots/
+
+# Ignore .vs generated files
+.vs2019/
