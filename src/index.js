@@ -53,11 +53,38 @@ const addEmailToMailChimp = (email) => {
   })
 }
 
-app.post('/addToMailChimp', async (req, res) => {
+const sendEmail = (email) => {
+  var options = {
+    method: 'POST',
+    url: 'https://us22.api.mailchimp.com/3.0/campaigns/09427e283b/actions/send',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization:
+        'Basic YW55c3RyaW5nOmE2MmY4MzMyNGMzNDkyMTQwMWEyYTBiMWJlZTYwMTIzLXVzMjI=',
+      Cookie:
+        'ak_bmsc=9F2B07D184D5E7BA1E04C08E0F46F5BA~000000000000000000000000000000~YAAQ1YYUAgjfw4eOAQAAcdvtshcyGoqGM/x1b1298Fts19AJMhW5vRF0vM/nrH5+0qhtJsuo2kWIxwOYbYXVgev5LnojuJKFVmoo0V8A26MyxmHpaxsDWOuSEJ57R22XSwaaiVaxnPrSVAnX6MlstMB4EK6ep/f000y/kuU7p69zbxMk3xZebvEBV3/GfqhugSQCif2Q403WhqciUB0ehIPe88/xj/NiEfzk5Y/IDjxt/rY4KBu0CVUIBalSdeMYR7m9tGqq0H776R2CDP3wXLXzxTKAiLBx2vNjojHZQcIOpfbBahL5KA9JmOOrIs7ELuNjtU7goPPLx5RQZNPyE6b5juH66S2ps7NEzhlaw+6j8Aqj5ceUvr815+mnXNOUzRIH; bm_sv=49DCEA42F4F84FF0D1982EC333C3F817~YAAQ1YYUAvP6w4eOAQAA4svvshcYPtclKUSV6Q4DyzwWNdXAVizU3x84bjWCzmayAuuE/WMkqv2aI8a6Hj1pIY5uJXOCM5WJbSw8rZaQ6SSGIcXLQP+yCZCdmyN5rW6rqbeCx34VUFR2tzaIENtv8LJPYlRm5K1X5iL9QmkYhoeq4v1SAY41ygFEd2+X0++3CxZgrjKXs8qHHlfgWOYtp/0GbZkDfbu3XTLLM40bh1U6SKnNGKBl86Z0rjsHabue48MB8OqWdw==~1',
+    },
+    body: JSON.stringify({
+      email_address: email,
+    }),
+  }
+  request(options, function (error, response) {
+    if (error) throw new Error(error)
+  })
+}
+app.post('/sendEmail', async (req, res) => {
   try {
-    addEmailToMailChimp(req.body.email)
+    const emailsExist = await EmailsModel.countDocuments({
+      email: req.body.email,
+    })
 
-    res.end('success')
+    if (emailsExist) {
+      return recordAlreadyExists(res)
+    } else {
+      addEmailToMailChimp(req.body.email)
+      sendEmail(req.body.email)
+      res.end('success')
+    }
   } catch (err) {
     console.log(err)
   }
@@ -70,11 +97,11 @@ app.post('/subscribe', async (req, res) => {
 
     if (emailsExist) {
       return recordAlreadyExists(res)
+    } else {
+      const rec = await new EmailsModel(req.body).save()
+
+      return createdResponse(rec, res)
     }
-
-    const rec = await new EmailsModel(req.body).save()
-
-    return createdResponse(rec, res)
   } catch (error) {
     return handleError(error, res, 'Error while subscribing website.')
   }
