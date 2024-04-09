@@ -9,6 +9,7 @@ import {
   handleError,
   createdResponse,
   recordAlreadyExists,
+  successResponse,
 } from './util/ApiResponse.js'
 import request from 'request'
 
@@ -104,6 +105,17 @@ app.post('/subscribe', async (req, res) => {
     }
   } catch (error) {
     return handleError(error, res, 'Error while subscribing website.')
+  }
+})
+
+app.get('/emails', async (req, res) => {
+  try {
+    const quantity = await EmailsModel.countDocuments()
+
+    return successResponse(quantity, res)
+  } catch (error) {
+    console.log(error)
+    return handleError(error, res, 'Error while getting records.')
   }
 })
 const router = Router()
