@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "build": "uglifyjs -b src -o dist"
   },
   "author": "",
   "license": "ISC",
@@ -18,6 +19,8 @@
     "request": "^2.88.2",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0",
+    "uglify-js": "^3.17.4",
+    "uglifyjs": "^2.4.11",
     "winston": "^3.13.0"
   }
 }
