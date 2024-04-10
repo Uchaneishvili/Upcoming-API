@@ -31,21 +31,20 @@ app.use(cors())
 app.use(bodyParser.json())
 
 const addEmailToMailChimp = (email) => {
-  const mailchimpApiKey = 'a62f83324c3492140162a0b1bee60123-us22'
-  const listId = 'e0068ab548'
-  const datacenterPrefix = mailchimpApiKey.split('-')[1]
-
-  const options = {
+  var options = {
     method: 'POST',
-    url: `https://${datacenterPrefix}.api.mailchimp.com/3.0/lists/${listId}/members/`,
+    url: 'https://us8.api.mailchimp.com/3.0/lists/467c7ef468/members/',
     headers: {
       'Content-Type': 'application/json',
       Authorization:
-        'Basic YW55c3RyaW5nOmE2MmY4MzMyNGMzNDkyMTQwMWEyYTBiMWJlZTYwMTIzLXVzMjI=',
+        'Basic YW55c3RyaW5nOmIzZTJhYTM2ZTQ4YTc5NDAyMDJhMGNiNzBlZmY0MmU0LXVzOA==',
+      Cookie:
+        'ak_bmsc=EB8711EF19DED3EFCF857DC0FC00A87D~000000000000000000000000000000~YAAQxYYUAhM257eOAQAAdEdRxxd0+0U0djMzygSTQxPvtchOvZHJuDMzinOPXhvccY2flMI2obkDdO3a4S2nwiNSdiPohxPSXaaF+xLRQU7CzJ4MPU8cDsjh4cNcZz2TTlvxujq2cdwrhO94bMSCyWKqK7PZu0y9fHXm9rI1zxkGcJ7WUXD9jK4efYvQ0PtFqKqA3pZwcAVeruTVdsrw6H7yyaSYeBOmcYAxNmO3c2UcZ0f/TJgzPclFuICbzQh8kb6NNO02p0TaX+pN4JomuBmTSrzD5gDp4F50AFvUXaIosIq1kS/ZGBuN3dXCg5C0HkGKONYC+K7KunjhzPZMmT5We8bHl6KAJxDE9yVIS2yi1kBiiGkf9hT6fle0GMICKX8S; bm_sv=C6A83F2BBAA532D68024DE023CD83572~YAAQvIYUAnYkEomOAQAAIZ9/xxeiTU9d5yJfGBYDs5VZ3ozPEnUJKH4RowcWBTmTFpvRZZPHBrGKT/c4SukcEnSyHSrjz4LZaCaHrq/ZE93VUukp2XFZywLVD52BaZlBdmujKujDgflnzj77dIEmXz7X3vZU1el089E0Sx8RnMVCB89Nayhh9lyjHasOBWQekiHmXx/aFZwXx6OBIVWJtJzV7rU3Kq6wA+SFierNROStcuXpzMdczLNbKLBqJSSgXYcjKqtDMw==~1',
     },
     body: JSON.stringify({
       email_address: email,
       status: 'subscribed',
+      tags: ['TvinUP2'],
     }),
   }
 
@@ -54,25 +53,6 @@ const addEmailToMailChimp = (email) => {
   })
 }
 
-const sendEmail = (email) => {
-  var options = {
-    method: 'POST',
-    url: 'https://us22.api.mailchimp.com/3.0/campaigns/09427e283b/actions/send',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization:
-        'Basic YW55c3RyaW5nOmE2MmY4MzMyNGMzNDkyMTQwMWEyYTBiMWJlZTYwMTIzLXVzMjI=',
-      Cookie:
-        'ak_bmsc=9F2B07D184D5E7BA1E04C08E0F46F5BA~000000000000000000000000000000~YAAQ1YYUAgjfw4eOAQAAcdvtshcyGoqGM/x1b1298Fts19AJMhW5vRF0vM/nrH5+0qhtJsuo2kWIxwOYbYXVgev5LnojuJKFVmoo0V8A26MyxmHpaxsDWOuSEJ57R22XSwaaiVaxnPrSVAnX6MlstMB4EK6ep/f000y/kuU7p69zbxMk3xZebvEBV3/GfqhugSQCif2Q403WhqciUB0ehIPe88/xj/NiEfzk5Y/IDjxt/rY4KBu0CVUIBalSdeMYR7m9tGqq0H776R2CDP3wXLXzxTKAiLBx2vNjojHZQcIOpfbBahL5KA9JmOOrIs7ELuNjtU7goPPLx5RQZNPyE6b5juH66S2ps7NEzhlaw+6j8Aqj5ceUvr815+mnXNOUzRIH; bm_sv=49DCEA42F4F84FF0D1982EC333C3F817~YAAQ1YYUAvP6w4eOAQAA4svvshcYPtclKUSV6Q4DyzwWNdXAVizU3x84bjWCzmayAuuE/WMkqv2aI8a6Hj1pIY5uJXOCM5WJbSw8rZaQ6SSGIcXLQP+yCZCdmyN5rW6rqbeCx34VUFR2tzaIENtv8LJPYlRm5K1X5iL9QmkYhoeq4v1SAY41ygFEd2+X0++3CxZgrjKXs8qHHlfgWOYtp/0GbZkDfbu3XTLLM40bh1U6SKnNGKBl86Z0rjsHabue48MB8OqWdw==~1',
-    },
-    body: JSON.stringify({
-      email_address: email,
-    }),
-  }
-  request(options, function (error, response) {
-    if (error) throw new Error(error)
-  })
-}
 app.post('/sendEmail', async (req, res) => {
   try {
     const emailsExist = await EmailsModel.countDocuments({
@@ -83,11 +63,10 @@ app.post('/sendEmail', async (req, res) => {
       return recordAlreadyExists(res)
     } else {
       addEmailToMailChimp(req.body.email)
-      sendEmail(req.body.email)
       res.end('success')
     }
   } catch (err) {
-    console.log(err)
+    return handleError(error, res, 'Error while sending email.')
   }
 })
 app.post('/subscribe', async (req, res) => {
@@ -114,7 +93,6 @@ app.get('/emails', async (req, res) => {
 
     return successResponse(quantity, res)
   } catch (error) {
-    console.log(error)
     return handleError(error, res, 'Error while getting records.')
   }
 })
